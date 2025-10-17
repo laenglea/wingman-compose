@@ -1,0 +1,115 @@
+services:
+  caddy:
+    image: caddy:2
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - LLM_TOKEN=${LLM_TOKEN}
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+  chat-auth:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.11.0
+    pull_policy: always
+    restart: unless-stopped
+    command: --config /oauth2-proxy.cfg
+    volumes:
+      - ./chat-auth.cfg:/oauth2-proxy.cfg
+
+  platform:
+    image: ghcr.io/laenglea/wingman-platform
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - REPLICATE_API_KEY=${REPLICATE_API_KEY}
+      - EXA_API_KEY=${EXA_API_KEY}
+      - DEEPL_API_KEY=${DEEPL_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+    volumes:
+      - ./config.yaml:/config.yaml:ro
+      - ./public:/public
+      - ./prompts:/prompts
+    networks:
+      - default
+  chat:
+    image: ghcr.io/laenglea/wingman-chat:dev
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - TITLE=Wingman AI
+      - WINGMAN_URL=http://platform:8080
+      - TTS_ENABLED=true
+      - STT_ENABLED=true
+      - VOICE_ENABLED=true
+      - VISION_ENABLED=true
+      - IMAGE_ENABLED=true
+      - INTERNET_ENABLED=true
+      - INTERNET_INDEX=exa
+      - INTERNET_EXTRACTOR=exa
+      - ARTIFACTS_ENABLED=true
+      - REPOSITORY_ENABLED=true
+      - REPOSITORY_EMBEDDER=text-embedding-3-small
+      - REALTIME_PROXY=http://realtime:8080
+      - HOST=0.0.0.0
+    volumes:
+      - ./models.yaml:/app/models.yaml
+      - ./translator.yaml:/app/translator.yaml
+    ports:
+      - 8000:8000
+    depends_on:
+      - platform
+      - chat-auth
+    networks:
+      - default
+
+#for voice mode
+  realtime:
+    image: ghcr.io/laenglea/wingman-realtime-proxy
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - default
+#Internet fetching
+  reader:
+    image: ghcr.io/laenglea/wingman-reader
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - default
+
+  segmenter:
+    image: ghcr.io/laenglea/wingman-segmenter
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - default
+
+  extractor:
+    image: ghcr.io/laenglea/wingman-extractor
+    pull_policy: always
+    restart: unless-stopped
+    networks:
+      - default
+
+networks:
+  traefik_proxy:
+    external: true
+  default:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

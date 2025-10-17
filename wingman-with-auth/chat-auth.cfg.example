@@ -1,0 +1,39 @@
+http_address="0.0.0.0:4180"
+
+banner="-"
+footer="-"
+
+cookie_secure="true"
+cookie_secret="<<generate secret with command in README.md>>"
+
+skip_provider_button="true"
+
+cookie_csrf_expire="5m"
+cookie_csrf_per_request="true"
+
+upstreams="http://chat:8000"
+
+redirect_url="https://chat.fastit.eu/oauth2/callback"
+
+email_domains="*"
+cookie_domains=["fastit.eu"]
+whitelist_domains=[".fastit.eu"]
+
+provider="oidc"
+provider_display_name="Azure AD"
+
+oidc_issuer_url="https://login.microsoftonline.com/<<55555555-4444-3333-2222-666666666666>>/v2.0"
+oidc_groups_claim = "roles"
+
+client_id="<<11111111-2222-3333-4444-555555555555"
+client_secret="<<KTH8Q~MZ11223344556677889900MFmQVwYVwcKf>>"
+
+errors_to_info_log = true
+show_debug_on_error = true
+
+skip_auth_routes = [
+  "/icon.png",
+  "/logo.png",
+  "/logo.svg",
+  "/manifest.json"
+]

@@ -1,0 +1,16 @@
+{
+  servers {
+    protocols h1 h2
+  }
+}
+
+<DOMAIN> {
+  # Files direkt an platform weiterleiten (z.B. für API/Downloads)
+  handle /files/* {
+    reverse_proxy platform:8080
+  }
+
+  # Alles andere über OAuth2-Proxy
+  reverse_proxy chat-auth:4180
+}
+

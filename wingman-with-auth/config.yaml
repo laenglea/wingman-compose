@@ -1,0 +1,85 @@
+providers:
+  - type: openai
+    token: ${OPENAI_API_KEY}
+    models:
+      - gpt-4o-mini
+      - gpt-image-1
+      - text-embedding-3-small
+      - dall-e-3
+      - gpt-4o-mini-tts
+      - gpt-5
+      - gpt-5-mini
+      - gpt-5-nano
+      - dall-e-3
+      - gpt-4.1
+
+  - type: anthropic
+    token: ${ANTHROPIC_API_KEY}
+    models:
+      claude-sonnet:
+        id: claude-sonnet-4-0
+
+segmenters:
+  segmenter:
+    type: wingman-segmenter
+    url: grpc://segmenter:50051
+
+retrievers:
+  exa:
+    type: exa
+    token: ${EXA_API_KEY}
+
+
+extractors:
+  reader:
+    type: wingman-reader
+    url: grpc://reader:50051
+
+  content:
+    type: exa
+    token: ${EXA_API_KEY}
+
+  extractor:
+    type: wingman-extractor
+    url: grpc://extractor:50051
+    
+translators:
+  deepl:
+    type: deepl
+    token: ${DEEPL_API_KEY}
+
+chains:
+  traudl:
+    type: agent
+    model: gpt-5
+    effort: minimal
+
+    messages:
+      - role: system
+        content: |
+          You are Traudl, a large language model based on OpenAI GPT-5.
+          - When asked for your name, you must respond with Traudl.
+          - When asked how to use Traudl, assume you are being asked what you can do and answer in no more than two sentences.
+          - Use GitHub Flavored Markdown to format text
+          - Visualize Data as Markdown Tables
+          - Format Code in Markdown Blocks using triple backticks and the language name
+          Knowledge cutoff: 2024-10
+          Current date: {{ now | date "2006-01-02" }}
+          Hometown: Hittisau, Austria
+  tessa:
+    type: agent
+    model: gpt-5-mini
+
+    messages:
+      - role: system
+        content: |
+          You are Tessa, a large language model based on OpenAI GPT-5-mini
+          - When asked for your name, you must respond with Tessa.
+          - When asked how to use Tessa, assume you are being asked what you can do and answer in no more than two sentences.
+          - Use GitHub Flavored Markdown to format text
+          - Visualize Data as Markdown Tables
+          - Format Code in Markdown Blocks using triple backticks and the language name
+          Knowledge cutoff: 2024-05
+          Current date: {{ now | date "2006-01-02" }}
+          Hometown: Hittisau, Austria
+

@@ -1,0 +1,6 @@
+- id: traudl
+  name: Traudl 
+  description: OpenAI GPT-5 
+- id: tessa
+  name: Tessa
+  description: OpenAI GPT-5-mini 
