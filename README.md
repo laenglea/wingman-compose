@@ -5,8 +5,10 @@ This is a repo to create a simple Docker deployment of Wingman
 ## wingman-with-auth
 
 Requirements:
-    - Azure Auth
-    - own domain
+
+  - Azure Auth
+  - own domain
+  - linux server with podman / docker installed
 
 ### example with url wingman.fastit.eu
 

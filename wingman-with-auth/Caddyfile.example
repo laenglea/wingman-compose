@@ -4,7 +4,7 @@
   }
 }
 
-<DOMAIN> {
+chat.fastit.eu {
   # Files direkt an platform weiterleiten (z.B. für API/Downloads)
   handle /files/* {
     reverse_proxy platform:8080
